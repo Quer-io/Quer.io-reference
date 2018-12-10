@@ -1,0 +1,43 @@
+version: '3.2'
+ 
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_USER: queriouser
+      POSTGRES_PASSWORD: pass1
+      POSTGRES_DB: queriopostgresdb
+
+  mariadb:
+    image: mariadb
+    volumes:
+      - ./mariadb-data:/var/lib/mysql
+    ports:
+    - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_USER: queriouser
+      MYSQL_PASSWORD: password1
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: queriomariadb
+
+  normalized-postgres-populator:
+    build: .
+    depends_on:
+      - postgres
+      - mariadb
+    command: ["./wait-for-it.sh", "postgres:5432", "--", "python", "-u", "init_normalized_database.py", "10000"]
+
+  normalized-mariadb-populator:
+    build: .
+    links:
+      - mariadb:mariadb
+    depends_on:
+      - postgres
+      - mariadb
+    command: ["./wait-for-it.sh", "mariadb:3306", "--", "python", "-u", "init_mariadb.py", "10000"]

@@ -1,0 +1,5 @@
+.vscode/*
+.idea/*
+*.querio
+docker-environment/data/*
+docker-environment/mariadb-data/*
