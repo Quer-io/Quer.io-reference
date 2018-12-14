@@ -1,7 +1,6 @@
-git+https://github.com/Quer-io/Quer.io#egg=Quer.io
+querio
 #database
 psycopg2==2.7.5
-mysqlclient==1.3.14
 SQLAlchemy==1.2.11
 
 #machine learning
